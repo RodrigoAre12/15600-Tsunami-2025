@@ -19,11 +19,9 @@ import java.util.regex.Pattern
 
 apply plugin: 'com.android.application'
 
-def useProguard = false
-
 android {
 
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     signingConfigs {
         release {
@@ -98,26 +96,12 @@ android {
             ndk {
                 abiFilters "armeabi-v7a"
             }
-
-            if (useProguard) {
-                minifyEnabled true
-                proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                        'proguard-rules.pro'
-                println(getProguardFiles())
-            }
         }
         debug {
             debuggable true
             jniDebuggable true
             ndk {
                 abiFilters "armeabi-v7a"
-            }
-
-            if (useProguard) {
-                minifyEnabled true
-                proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                        'proguard-rules.pro'
-                println(getProguardFiles())
             }
         }
     }
@@ -130,10 +114,7 @@ android {
     packagingOptions {
         pickFirst '**/*.so'
     }
-    sourceSets.main {
-        jni.srcDirs = []
-        jniLibs.srcDir rootProject.file('libs')
-    }
+
     ndkVersion '21.3.6528147'
 }
 
