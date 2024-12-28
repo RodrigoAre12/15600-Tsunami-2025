@@ -32,6 +32,10 @@ public class IntakeServoSubsystem extends SubsystemBase {
         ser1.setPower(power);
     }
 
+    public ColorSensor getColorSensor(){
+        return color;
+    }
+
 
     @Override
     public  void periodic() {

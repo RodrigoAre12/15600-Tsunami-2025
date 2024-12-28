@@ -10,7 +10,9 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.Commands.NothingCommandCommand;
 import org.firstinspires.ftc.teamcode.Commands.OutakeCommand;
 import org.firstinspires.ftc.teamcode.MecanumDriveCommand;
 import org.firstinspires.ftc.teamcode.Subsystem.ArmExtensionSubsystem;
@@ -21,11 +23,17 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
 @TeleOp
-public class TeleOp15600 extends CommandOpMode {
+public class TeleOp15600Red extends CommandOpMode {
 //2350     2800
 
     @Override
     public void initialize() {
+
+        Gamepad.RumbleEffect rumbleEffect = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
+                .build();
+
         GamepadEx chassisDriver = new GamepadEx(gamepad1);
         GamepadEx subsystemsDriver = new GamepadEx(gamepad2);
 
@@ -65,45 +73,55 @@ public class TeleOp15600 extends CommandOpMode {
         chassisDriver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(
                         new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                 new InstantCommand(()->m_extentionArm.goToPosition(3500)),
-                                 new WaitCommand(200),
-                                 new InstantCommand(()->m_mainArm.goToPosition(700)),
-                                 new RunCommand(()-> m_intake.setPower(1)))
-                                ,
                                 new SequentialCommandGroup(
-                                        new InstantCommand(()->m_extentionArm.goToPosition(3800)),
+                                        new InstantCommand(()->m_extentionArm.goToPosition(3500)),
                                         new WaitCommand(200),
                                         new InstantCommand(()->m_mainArm.goToPosition(700)),
-                                        new RunCommand(()-> m_intake.setPower(1))),
+                                        new InstantCommand(()-> m_intake.setPower(1)),
+                                        new ConditionalCommand(
+                                                new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
+                                                new NothingCommandCommand(),
+                                                ()-> m_intake.getColorSensor().blue() > 1000 || m_intake.getColorSensor().green() > 1000
+                                        )
+                                )
+                                ,
+                                new SequentialCommandGroup(
+                                        new InstantCommand(()->m_extentionArm.goToPosition(4200)),
+                                        new WaitCommand(200),
+                                        new InstantCommand(()->m_mainArm.goToPosition(1000)),
+                                        new InstantCommand(()-> m_intake.setPower(1)),
+                                        new ConditionalCommand(
+                                                new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
+                                                new NothingCommandCommand(),
+                                                ()-> m_intake.getColorSensor().blue() > 1000 || m_intake.getColorSensor().green() > 1000
+                                        )),
                                 ()-> m_mainArm.arm_state == ArmSubsystem.ArmState.OutsideSubmersible))
 
                 .whenReleased(
                         new ConditionalCommand(
-                        new ParallelCommandGroup(
-                        new InstantCommand(()->m_intake.setPower(0)),
-                        new InstantCommand(()->m_mainArm.goToPosition(0))
-                        , new InstantCommand(()->m_extentionArm.goToPosition(400))
-                )
-                        ,
+                                new ParallelCommandGroup(
+                                        new InstantCommand(()->m_intake.setPower(0)),
+                                        new InstantCommand(()->m_mainArm.goToPosition(0))
+                                        , new InstantCommand(()->m_extentionArm.goToPosition(400))
+                                )
+                                ,
                                 new SequentialCommandGroup(
                                         new InstantCommand(()->m_extentionArm.goToPosition(3100)),
                                         new InstantCommand(()->m_mainArm.goToPosition(700)),
-                                        new WaitCommand(1000),
                                         new InstantCommand(()->m_intake.setPower(0)),
-                                        new InstantCommand(()->m_mainArm.goToPosition(0)),
-                                        new InstantCommand(()->m_mainArm.changeArmState(ArmSubsystem.ArmState.OutsideSubmersible)),
-                                        new InstantCommand(()->m_extentionArm.goToPosition(400)))
-                ,()-> m_mainArm.arm_state == ArmSubsystem.ArmState.OutsideSubmersible));
+                                        new WaitCommand(750),
+                                        new InstantCommand(()->m_mainArm.changeArmState(ArmSubsystem.ArmState.OutsideSubmersible)))
+                                ,()-> m_mainArm.arm_state == ArmSubsystem.ArmState.OutsideSubmersible));
+
 
         //Reset
         chassisDriver.getGamepadButton(GamepadKeys.Button.START)
-                        .whenPressed(
-                                new ParallelCommandGroup(
-                                        new InstantCommand(
-                                                m_mainArm::resetTicks),
-                                        new InstantCommand(
-                                                m_extentionArm::resetTicks)));
+                .whenPressed(
+                        new ParallelCommandGroup(
+                                new InstantCommand(
+                                        m_mainArm::resetTicks),
+                                new InstantCommand(
+                                        m_extentionArm::resetTicks)));
 
         //Arm positions
         chassisDriver.getGamepadButton(GamepadKeys.Button.X)
@@ -115,14 +133,14 @@ public class TeleOp15600 extends CommandOpMode {
                                 new InstantCommand(()->m_mainArm.goToPosition(800))));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.B)
-                        .whenPressed(()-> m_extentionArm.goToPosition(950));
+                .whenPressed(()-> m_extentionArm.goToPosition(950));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-                        .whenPressed(()->m_mainArm.goToPosition(800))
-                        .whenPressed(()-> m_extentionArm.goToPosition(1300));
+                .whenPressed(()->m_mainArm.goToPosition(800))
+                .whenPressed(()-> m_extentionArm.goToPosition(1300));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
-                        .whileHeld(new ParallelCommandGroup(
+                .whileHeld(new ParallelCommandGroup(
                         new InstantCommand(()-> m_intake.setPower(-1)),
                         new InstantCommand(()-> m_mainArm.changeArmState(ArmSubsystem.ArmState.OutsideSubmersible)))).whenReleased(
 
@@ -133,22 +151,23 @@ public class TeleOp15600 extends CommandOpMode {
                 );
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                        .whenPressed(new ParallelCommandGroup(
-                                new InstantCommand(()-> m_mainArm.goToPosition(1700)),
-                                new InstantCommand(()-> m_extentionArm.goToPosition(2200))
-                        ));
+                .whenPressed(new ParallelCommandGroup(
+                        new InstantCommand(()-> m_mainArm.goToPosition(1700)),
+                        new InstantCommand(()-> m_extentionArm.goToPosition(2200))
+                ));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                        .whenPressed(()->m_intake.setPower(-1))
+                .whenPressed(()->m_intake.setPower(-1))
                 .whenReleased(
-        new SequentialCommandGroup(
-                new InstantCommand(()->m_intake.setPower(0)),
-                new InstantCommand(()->m_extentionArm.goToPosition(3000)),
-                new WaitCommand(500),
-                new InstantCommand(()->m_mainArm.goToPosition(0)),
-                new WaitCommand(300),
-                new InstantCommand(()->m_extentionArm.goToPosition(900))
-        ));
+                        new SequentialCommandGroup(
+                                new InstantCommand(()->m_intake.setPower(0)),
+                                new InstantCommand(()->m_extentionArm.goToPosition(3000)),
+                                new WaitCommand(500),
+                                new InstantCommand(()->m_mainArm.goToPosition(800)),
+                                new WaitCommand(300),
+                                new InstantCommand(()->m_extentionArm.goToPosition(3200)),
+                                new InstantCommand(()-> m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible))
+                        ));
 
 
         driveSystem.setDefaultCommand(new MecanumDriveCommand(
