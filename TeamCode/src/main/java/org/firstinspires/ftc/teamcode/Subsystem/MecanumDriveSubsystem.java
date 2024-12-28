@@ -65,11 +65,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         Vector2d input;
         if(!isBlueAlliance) {
             input = new Vector2d(-leftY, -leftX).rotated(
-                    fieldCentric ? -poseEstimate.getHeading() + 1.570795 : 0
+                    fieldCentric ? -poseEstimate.getHeading() + 3.14159 + 1.570795 : 0
             );
         }else{
             input = new Vector2d(-leftY, -leftX).rotated(
-                    fieldCentric ? -poseEstimate.getHeading() + 3.14159 + 1.570795 : 0
+                    fieldCentric ? -poseEstimate.getHeading() + 6.25049 : 0
             );
         }
 
