@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Commands.OutakeCommand;
 import org.firstinspires.ftc.teamcode.MecanumDriveCommand;
 import org.firstinspires.ftc.teamcode.Subsystem.ArmExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.ArmSubsystem;
@@ -111,18 +112,29 @@ public class TeleOp15600 extends CommandOpMode {
                                 new InstantCommand(()->m_extentionArm.goToPosition(3200)),
                                 new WaitCommand(200),
                                 new InstantCommand(()->m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible)),
-                                new InstantCommand(()->m_mainArm.goToPosition(900))));
+                                new InstantCommand(()->m_mainArm.goToPosition(800))));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.B)
-                        .whenPressed(()-> m_extentionArm.goToPosition(900));
+                        .whenPressed(()-> m_extentionArm.goToPosition(950));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                         .whenPressed(()->m_mainArm.goToPosition(800))
                         .whenPressed(()-> m_extentionArm.goToPosition(1300));
 
+        chassisDriver.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+                        .whileHeld(new ParallelCommandGroup(
+                        new InstantCommand(()-> m_intake.setPower(-1)),
+                        new InstantCommand(()-> m_mainArm.changeArmState(ArmSubsystem.ArmState.OutsideSubmersible)))).whenReleased(
+
+                        new SequentialCommandGroup(
+                                new InstantCommand(()->m_mainArm.goToPosition(0)),
+                                new InstantCommand(()->m_intake.setPower(0)),
+                                new InstantCommand(()->m_extentionArm.goToPosition(400)))
+                );
+
         chassisDriver.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                         .whenPressed(new ParallelCommandGroup(
-                                new InstantCommand(()-> m_mainArm.goToPosition(1750)),
+                                new InstantCommand(()-> m_mainArm.goToPosition(1700)),
                                 new InstantCommand(()-> m_extentionArm.goToPosition(2200))
                         ));
 
@@ -142,6 +154,7 @@ public class TeleOp15600 extends CommandOpMode {
         driveSystem.setDefaultCommand(new MecanumDriveCommand(
                 driveSystem, () -> -chassisDriver.getLeftY(), chassisDriver::getLeftX, chassisDriver::getRightX
         ));
+
 
 
         schedule(new RunCommand(()-> {
