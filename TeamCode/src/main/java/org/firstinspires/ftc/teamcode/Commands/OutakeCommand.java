@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.teamcode.Subsystem.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.IntakeServoSubsystem;
@@ -11,20 +12,24 @@ import org.firstinspires.ftc.teamcode.Subsystem.IntakeServoSubsystem;
 public class OutakeCommand extends CommandBase {
 
     IntakeServoSubsystem m_intake;
-    ArmSubsystem m_arm;
-    GamepadEx gamepad;
+    ColorSensor m_sensor;
+    boolean isBlueAlliance;
 
-    public OutakeCommand(IntakeServoSubsystem m_intake, ArmSubsystem m_arm,GamepadEx gamepad){
+    public OutakeCommand(IntakeServoSubsystem m_intake, ColorSensor m_sensor, boolean isBlueAlliance){
         this.m_intake = m_intake;
-        this.gamepad = gamepad;
-        this.m_arm = m_arm;
+        this.m_sensor = m_sensor;
+        this.isBlueAlliance = isBlueAlliance;
+
+        addRequirements(m_intake);
     }
 
     @Override
     public void execute() {
-        if(gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>.5){
+        if(isBlueAlliance ? m_sensor.red() > 1000 : m_sensor.blue() > 1000){
             m_intake.setPower(-1);
-            m_arm.changeArmState(ArmSubsystem.ArmState.OutsideSubmersible);
+        }
+        else{
+            m_intake.setPower(0);
         }
     }
 }

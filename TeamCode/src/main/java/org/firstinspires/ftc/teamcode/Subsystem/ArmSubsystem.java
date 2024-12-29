@@ -18,9 +18,8 @@ public class ArmSubsystem extends SubsystemBase {
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
-    private PIDController m_controller = new PIDController(0.00045,0,0);
+    private PIDController m_controller = new PIDController(0.00036,0,0.000035);
     private double outputMain = 0;
-
     public enum ArmState{
         InsideSubmersible,
         OutsideSubmersible

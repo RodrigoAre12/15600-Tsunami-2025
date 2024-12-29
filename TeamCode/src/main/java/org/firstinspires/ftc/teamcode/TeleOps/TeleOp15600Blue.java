@@ -47,7 +47,7 @@ public class TeleOp15600Blue extends CommandOpMode {
         chassisDriver.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(
                         new SequentialCommandGroup(
-                                new InstantCommand(()->m_extentionArm.goToPosition(2400)),
+                                new InstantCommand(()->m_extentionArm.goToPosition(2500)),
                                 new WaitCommand(150
                                 )
                                 , new InstantCommand(()->m_mainArm.goToPosition(2600))
@@ -59,7 +59,8 @@ public class TeleOp15600Blue extends CommandOpMode {
                                 new InstantCommand(()->m_mainArm.goToPosition(0)),
                                 new WaitCommand(500)
                                 , new InstantCommand(()->m_extentionArm.goToPosition(400))
-                        ));
+                        )
+                );
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(
@@ -106,7 +107,7 @@ public class TeleOp15600Blue extends CommandOpMode {
                                 )
                                 ,
                                 new SequentialCommandGroup(
-                                        new InstantCommand(()->m_extentionArm.goToPosition(3100)),
+                                        new InstantCommand(()->m_extentionArm.goToPosition(3300)),
                                         new InstantCommand(()->m_mainArm.goToPosition(700)),
                                         new InstantCommand(()->m_intake.setPower(0)),
                                         new WaitCommand(750),
@@ -163,7 +164,7 @@ public class TeleOp15600Blue extends CommandOpMode {
                                 new InstantCommand(()->m_intake.setPower(0)),
                                 new InstantCommand(()->m_extentionArm.goToPosition(3000)),
                                 new WaitCommand(500),
-                                new InstantCommand(()->m_mainArm.goToPosition(800)),
+                                new InstantCommand(()->m_mainArm.goToPosition(400)),
                                 new WaitCommand(300),
                                 new InstantCommand(()->m_extentionArm.goToPosition(3200)),
                                 new InstantCommand(()-> m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible))

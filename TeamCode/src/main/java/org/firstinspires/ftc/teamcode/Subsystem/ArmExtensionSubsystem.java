@@ -19,7 +19,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
     private boolean useZero = false;
 
-    private PIDController m_controllerExtention = new PIDController(0.000358,0,0);
+    private PIDController m_controllerExtention = new PIDController(0.0005,0,0);
     private double outputExtension = 0;
 
     public enum ExtentionState{
