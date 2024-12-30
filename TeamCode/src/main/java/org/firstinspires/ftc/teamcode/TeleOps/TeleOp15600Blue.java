@@ -50,7 +50,7 @@ public class TeleOp15600Blue extends CommandOpMode {
                                 new InstantCommand(()->m_extentionArm.goToPosition(2500)),
                                 new WaitCommand(150
                                 )
-                                , new InstantCommand(()->m_mainArm.goToPosition(2600))
+                                , new InstantCommand(()->m_mainArm.goToPosition(2800))
                         ));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.A)
@@ -78,12 +78,9 @@ public class TeleOp15600Blue extends CommandOpMode {
                                         new InstantCommand(()->m_extentionArm.goToPosition(3500)),
                                         new WaitCommand(200),
                                         new InstantCommand(()->m_mainArm.goToPosition(700)),
-                                        new InstantCommand(()-> m_intake.setPower(1)),
-                                        new ConditionalCommand(
-                                                new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
-                                                new NothingCommandCommand(),
-                                                ()-> m_intake.getColorSensor().blue() > 1000 || m_intake.getColorSensor().green() > 1000
-                                        )
+                                        m_intake.getColorSensor().blue() > 1000?
+                                            new InstantCommand(()->m_intake.setPower(-1)) : new InstantCommand(()->m_intake.setPower(1))
+
                                 )
                                 ,
                                 new SequentialCommandGroup(
@@ -170,11 +167,22 @@ public class TeleOp15600Blue extends CommandOpMode {
                                 new InstantCommand(()-> m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible))
                         ));
 
+        chassisDriver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new SequentialCommandGroup(
+                                new InstantCommand(()->m_extentionArm.goToPosition(3000)),
+                                new WaitCommand(150
+                                )
+                                , new InstantCommand(()->m_mainArm.goToPosition(3000))
+                        ));
+
+        chassisDriver.getGamepadButton(GamepadKeys.Button.BACK)
+                        .whenPressed(new InstantCommand(()->driveSystem.invertFieldCentric()));
+
 
         driveSystem.setDefaultCommand(new MecanumDriveCommand(
                 driveSystem, () -> -chassisDriver.getLeftY(), chassisDriver::getLeftX, chassisDriver::getRightX
         ));
-
 
 
         schedule(new RunCommand(()-> {
@@ -185,6 +193,8 @@ public class TeleOp15600Blue extends CommandOpMode {
 
 
     }
+
+
 
 
 

@@ -21,7 +21,7 @@ import java.util.List;
 public class MecanumDriveSubsystem extends SubsystemBase {
 
     private final SampleMecanumDrive drive;
-    private final boolean fieldCentric;
+    private  boolean fieldCentric;
     private boolean isInverted = true;
     private final boolean isBlueAlliance;
 
@@ -41,6 +41,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
     public void toggleInverted(){
         this.isInverted = !isInverted;
+    }
+
+    public void invertFieldCentric(){
+        this.fieldCentric = !fieldCentric;
     }
 
     public void setPoseEstimate(Pose2d pose) {

@@ -25,11 +25,8 @@ public class OutakeCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if(isBlueAlliance ? m_sensor.red() > 1000 : m_sensor.blue() > 1000){
-            m_intake.setPower(-1);
-        }
-        else{
+
             m_intake.setPower(0);
-        }
+
     }
 }
