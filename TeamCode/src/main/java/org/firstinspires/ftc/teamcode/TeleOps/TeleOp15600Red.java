@@ -50,7 +50,7 @@ public class TeleOp15600Red extends CommandOpMode {
                                 new InstantCommand(()->m_extentionArm.goToPosition(2500)),
                                 new WaitCommand(150
                                 )
-                                , new InstantCommand(()->m_mainArm.goToPosition(2600))
+                                , new InstantCommand(()->m_mainArm.goToPosition(2800))
                         ));
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.A)
@@ -74,9 +74,9 @@ public class TeleOp15600Red extends CommandOpMode {
                 .whileHeld(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new InstantCommand(()->m_extentionArm.goToPosition(3500)),
+                                        new InstantCommand(()->m_extentionArm.goToPosition(3225)),
                                         new WaitCommand(200),
-                                        new InstantCommand(()->m_mainArm.goToPosition(700)),
+                                        new InstantCommand(()->m_mainArm.goToPosition(600)),
                                         new InstantCommand(()-> m_intake.setPower(1)),
                                         new ConditionalCommand(
                                                 new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
@@ -88,7 +88,7 @@ public class TeleOp15600Red extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new InstantCommand(()->m_extentionArm.goToPosition(4200)),
                                         new WaitCommand(200),
-                                        new InstantCommand(()->m_mainArm.goToPosition(1000)),
+                                        new InstantCommand(()->m_mainArm.goToPosition(900)),
                                         new InstantCommand(()-> m_intake.setPower(1)),
                                         new ConditionalCommand(
                                                 new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
@@ -127,7 +127,7 @@ public class TeleOp15600Red extends CommandOpMode {
         chassisDriver.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(
                         new SequentialCommandGroup(
-                                new InstantCommand(()->m_extentionArm.goToPosition(3200)),
+                                new InstantCommand(()->m_extentionArm.goToPosition(3000)),
                                 new WaitCommand(200),
                                 new InstantCommand(()->m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible)),
                                 new InstantCommand(()->m_mainArm.goToPosition(800))));

@@ -72,14 +72,14 @@ public class TeleOpWithoutFC extends CommandOpMode {
                 .whileHeld(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new InstantCommand(()->m_extentionArm.goToPosition(3500)),
+                                        new InstantCommand(()->m_extentionArm.goToPosition(3400)),
                                         new WaitCommand(200),
                                         new InstantCommand(()->m_mainArm.goToPosition(700)),
                                         new InstantCommand(()-> m_intake.setPower(1)),
                                         new ConditionalCommand(
                                                 new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
                                                 new NothingCommandCommand(),
-                                                ()-> m_intake.getColorSensor().blue() > 1000 || m_intake.getColorSensor().green() > 1000
+                                                ()-> m_intake.getBlue() || m_intake.getGreen()
                                         )
                                 )
                                 ,
@@ -91,7 +91,7 @@ public class TeleOpWithoutFC extends CommandOpMode {
                                         new ConditionalCommand(
                                                 new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
                                                 new NothingCommandCommand(),
-                                                ()-> m_intake.getColorSensor().blue() > 1000 || m_intake.getColorSensor().green() > 1000
+                                                ()-> m_intake.getBlue() || m_intake.getGreen()
                                         )),
                                 ()-> m_mainArm.arm_state == ArmSubsystem.ArmState.OutsideSubmersible))
 
@@ -125,7 +125,7 @@ public class TeleOpWithoutFC extends CommandOpMode {
         chassisDriver.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(
                         new SequentialCommandGroup(
-                                new InstantCommand(()->m_extentionArm.goToPosition(3200)),
+                                new InstantCommand(()->m_extentionArm.goToPosition(3100)),
                                 new WaitCommand(200),
                                 new InstantCommand(()->m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible)),
                                 new InstantCommand(()->m_mainArm.goToPosition(800))));

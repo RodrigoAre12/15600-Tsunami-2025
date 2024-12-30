@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TeleOp15600Blue extends CommandOpMode {
 //2350     2800
 
+    long[] lastRumbleTime = {0};
     @Override
     public void initialize() {
 
@@ -75,10 +76,10 @@ public class TeleOp15600Blue extends CommandOpMode {
                 .whileHeld(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new InstantCommand(()->m_extentionArm.goToPosition(3500)),
+                                        new InstantCommand(()->m_extentionArm.goToPosition(3225)),
                                         new WaitCommand(200),
-                                        new InstantCommand(()->m_mainArm.goToPosition(700)),
-                                        m_intake.getColorSensor().blue() > 1000?
+                                        new InstantCommand(()->m_mainArm.goToPosition(600)),
+                                        m_intake.getBlue()?
                                             new InstantCommand(()->m_intake.setPower(-1)) : new InstantCommand(()->m_intake.setPower(1))
 
                                 )
@@ -86,12 +87,12 @@ public class TeleOp15600Blue extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new InstantCommand(()->m_extentionArm.goToPosition(4200)),
                                         new WaitCommand(200),
-                                        new InstantCommand(()->m_mainArm.goToPosition(1000)),
+                                        new InstantCommand(()->m_mainArm.goToPosition(900)),
                                         new InstantCommand(()-> m_intake.setPower(1)),
                                         new ConditionalCommand(
                                                 new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
                                                 new NothingCommandCommand(),
-                                                ()-> m_intake.getColorSensor().blue() > 1000 || m_intake.getColorSensor().green() > 1000
+                                                ()-> m_intake.getBlue() || m_intake.getGreen()
                                         )),
                                 ()-> m_mainArm.arm_state == ArmSubsystem.ArmState.OutsideSubmersible))
 
@@ -125,7 +126,7 @@ public class TeleOp15600Blue extends CommandOpMode {
         chassisDriver.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(
                         new SequentialCommandGroup(
-                                new InstantCommand(()->m_extentionArm.goToPosition(3200)),
+                                new InstantCommand(()->m_extentionArm.goToPosition(3000)),
                                 new WaitCommand(200),
                                 new InstantCommand(()->m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible)),
                                 new InstantCommand(()->m_mainArm.goToPosition(800))));
@@ -139,7 +140,7 @@ public class TeleOp15600Blue extends CommandOpMode {
 
         chassisDriver.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whileHeld(new ParallelCommandGroup(
-                        new InstantCommand(()-> m_intake.setPower(-1)),
+                        new InstantCommand(()-> m_intake.setPower(-.5)),
                         new InstantCommand(()-> m_mainArm.changeArmState(ArmSubsystem.ArmState.OutsideSubmersible)))).whenReleased(
 
                         new SequentialCommandGroup(
@@ -161,9 +162,9 @@ public class TeleOp15600Blue extends CommandOpMode {
                                 new InstantCommand(()->m_intake.setPower(0)),
                                 new InstantCommand(()->m_extentionArm.goToPosition(3000)),
                                 new WaitCommand(500),
-                                new InstantCommand(()->m_mainArm.goToPosition(400)),
+                                new InstantCommand(()->m_mainArm.goToPosition(500)),
                                 new WaitCommand(300),
-                                new InstantCommand(()->m_extentionArm.goToPosition(3200)),
+                                new InstantCommand(()->m_extentionArm.goToPosition(3150)),
                                 new InstantCommand(()-> m_mainArm.changeArmState(ArmSubsystem.ArmState.InsideSubmersible))
                         ));
 
@@ -188,6 +189,15 @@ public class TeleOp15600Blue extends CommandOpMode {
         schedule(new RunCommand(()-> {
             driveSystem.update();
             telemetry.addData("Heading", driveSystem.getPoseEstimate().getHeading());
+
+            long currentTime = System.currentTimeMillis();
+
+            if (m_intake.getBlue() || m_intake.getGreen() && currentTime - lastRumbleTime[0]>1000) {
+
+                chassisDriver.gamepad.runRumbleEffect(rumbleEffect);
+
+                lastRumbleTime[0] = currentTime;
+            }
             telemetry.update();
         }));
 

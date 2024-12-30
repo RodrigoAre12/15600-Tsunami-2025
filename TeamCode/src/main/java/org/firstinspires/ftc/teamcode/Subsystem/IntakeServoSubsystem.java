@@ -36,6 +36,17 @@ public class IntakeServoSubsystem extends SubsystemBase {
         return color;
     }
 
+    public boolean getRed(){
+        return color.red() > 1000;
+    }
+
+    public boolean getBlue(){
+        return color.blue() > 2000;
+    }
+
+    public boolean getGreen(){
+        return color.green() > 2000;
+    }
 
     @Override
     public  void periodic() {
