@@ -37,7 +37,13 @@ public class IntakeServoSubsystem extends SubsystemBase {
     }
 
     public boolean getRed(){
-        return color.red() > 1000;
+        if(((color.green() + color.red()) / 2) > 1700) {
+            return false;
+        }
+        else{
+            return color.red() > 1000;
+
+        }
     }
 
     public boolean getBlue(){
@@ -52,7 +58,7 @@ public class IntakeServoSubsystem extends SubsystemBase {
     public  void periodic() {
         telemetry.addData("Blue", color.blue());
         telemetry.addData("Red", color.red());
-        telemetry.addData("Yellow",color.green());
+        telemetry.addData("Yellow",(color.green() + color.red()) / 2);
         telemetry.update();
     }
 }

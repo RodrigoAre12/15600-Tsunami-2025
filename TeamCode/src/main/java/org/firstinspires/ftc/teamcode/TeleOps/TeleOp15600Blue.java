@@ -31,8 +31,8 @@ public class TeleOp15600Blue extends CommandOpMode {
     public void initialize() {
 
         Gamepad.RumbleEffect rumbleEffect = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
-                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
+                .addStep(0.0, 0.5, 500)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0.0, 100000)  //  Pause for 300 mSec
                 .build();
 
         GamepadEx chassisDriver = new GamepadEx(gamepad1);
@@ -76,24 +76,27 @@ public class TeleOp15600Blue extends CommandOpMode {
                 .whileHeld(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        new InstantCommand(()->m_extentionArm.goToPosition(3225)),
+                                        new InstantCommand(()->m_extentionArm.goToPosition(3305)),
                                         new WaitCommand(200),
                                         new InstantCommand(()->m_mainArm.goToPosition(600)),
-                                        m_intake.getBlue()?
-                                            new InstantCommand(()->m_intake.setPower(-1)) : new InstantCommand(()->m_intake.setPower(1))
-
-                                )
+                                        new ConditionalCommand(
+                                                new InstantCommand(()->m_intake.setPower(-1)),
+                                                new InstantCommand(()-> m_intake.setPower(1)),
+                                                m_intake::getRed))
                                 ,
                                 new SequentialCommandGroup(
                                         new InstantCommand(()->m_extentionArm.goToPosition(4200)),
                                         new WaitCommand(200),
                                         new InstantCommand(()->m_mainArm.goToPosition(900)),
-                                        new InstantCommand(()-> m_intake.setPower(1)),
                                         new ConditionalCommand(
+                                                new InstantCommand(()->m_intake.setPower(-1)),
+                                                new InstantCommand(()-> m_intake.setPower(1)),
+                                                m_intake::getRed)
+                                        /*new ConditionalCommand(
                                                 new InstantCommand(()-> chassisDriver.gamepad.runRumbleEffect(rumbleEffect)),
                                                 new NothingCommandCommand(),
                                                 ()-> m_intake.getBlue() || m_intake.getGreen()
-                                        )),
+                                        )*/),
                                 ()-> m_mainArm.arm_state == ArmSubsystem.ArmState.OutsideSubmersible))
 
                 .whenReleased(
